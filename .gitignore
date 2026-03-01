@@ -1,0 +1,8 @@
+build/
+.vs_code/
+out/
+.vs/
+cmake-build-debug/
+.idea/
+.vscode/
+*.DS_Store
