@@ -8,7 +8,7 @@ Menu::Menu(IStateManager& state_manager)
 
 void Menu::setup_buttons(sf::Vector2u window_size){
     float center_x = window_size.x / 2.0f;
-    float button_width = 300.0f;
+    float button_width = 320.0f;
     float button_height = 60.0f;
 
     m_title_text.setFont(MyFont::instance().get_font());
@@ -17,31 +17,31 @@ void Menu::setup_buttons(sf::Vector2u window_size){
     m_title_text.setFillColor(sf::Color::Black);
     m_title_text.setOutlineThickness(3);
     m_title_text.setOutlineColor(sf::Color::White);
-    m_title_text.setPosition(sf::Vector2f(140, button_height-6));
+    m_title_text.setPosition(sf::Vector2f(80, 100));
 
     m_buttons[0].set(
-        sf::Vector2f{center_x - button_width/2,100},
+        sf::Vector2f{100, 850 - 7*button_height},
         sf::Vector2f{button_width, button_height},
         "5 Fingers",
         30,
         new GameCommand(m_state_manager, new GameBuilderDirector()));
 
     m_buttons[1].set(
-        sf::Vector2f{center_x - button_width/2, 170},
+        sf::Vector2f{100, 850 - 5*button_height},
         sf::Vector2f{button_width, button_height},
         "15 Fingers",
         30,
         new GameCommand(m_state_manager, new GameBuilderDirector()));
 
     m_buttons[2].set(
-        sf::Vector2f{center_x - button_width/2, 240},
+        sf::Vector2f{100, 850 - 3*button_height},
         sf::Vector2f{button_width, button_height},
         "20 Fingers",
         30,
         new GameCommand(m_state_manager, new GameBuilderDirector()));
 
     m_buttons[3].set(
-        sf::Vector2f{center_x - button_width/2, 400},
+        sf::Vector2f{100, 850},
         sf::Vector2f{button_width, button_height},
         "Exit",
         30,

@@ -20,6 +20,9 @@ add_executable(proga
         source/Menu.cpp
         source/Commands.h
         source/Commands.cpp
+        source/Maze.h
+        source/Maze.cpp
+        source/GameContext.h
 )
 set_target_properties(proga PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS ON)
 target_link_libraries(proga PRIVATE SFML::System SFML::Window SFML::Graphics)

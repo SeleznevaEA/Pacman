@@ -25,7 +25,7 @@ void GameState::event_handling() {
             // Из GameState можно перейти только в SelectState
             set_next_state(std::make_unique<SelectState>(
                 m_state_manager,
-                sf::VideoMode({1000, 600}),
+                sf::VideoMode({963, 1020}),
                 "Select State"
             ));
         }
@@ -35,7 +35,7 @@ void GameState::event_handling() {
                 // Из GameState можно перейти только в SelectState
                 set_next_state(std::make_unique<SelectState>(
                     m_state_manager,
-                    sf::VideoMode({1000, 600}),
+                    sf::VideoMode({963, 1020}),
                     "Select State"
                 ));
             }
