@@ -1,4 +1,4 @@
-#include "application.h"
+#include "Application.h"
 
 void Application::set_initial_state(std::unique_ptr<IState> initial_state){
     m_ptr_state_current = std::move(initial_state);

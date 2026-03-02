@@ -4,8 +4,7 @@
 
 GameState::GameState(IStateManager& state_manager, sf::VideoMode video_mode, const std::string& window_title)
     : IState(state_manager)
-    , IWindowKeeper(video_mode, window_title) {
-
+    , IWindowKeeper(video_mode, window_title){
     std::cout << "GameState created" << std::endl;
 }
 

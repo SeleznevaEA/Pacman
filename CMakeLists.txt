@@ -14,7 +14,13 @@ add_executable(proga
         source/ExitState.h
         source/GameState.cpp
         source/ExitState.cpp
-        source/main.cpp)
+        source/main.cpp
+        source/Menu.h
+        source/Button.cpp
+        source/Menu.cpp
+        source/Commands.h
+        source/Commands.cpp
+)
 set_target_properties(proga PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS ON)
 target_link_libraries(proga PRIVATE SFML::System SFML::Window SFML::Graphics)
 

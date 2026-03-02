@@ -1,116 +1,66 @@
 #include "SelectState.h"
 #include "Resources.h"
-#include "GameState.h"
 #include "ExitState.h"
 
 SelectState::SelectState(IStateManager& state_manager, sf::VideoMode video_mode, const std::string& window_title)
-    : IState(state_manager), IWindowKeeper(video_mode, window_title), m_select_option(SelectOption::Start),
-        m_title_text(Resources::MainFont(), "GAME MENU", 50),
-        m_start_text(Resources::MainFont(), "Start Game", 30),
-        m_exit_text(Resources::MainFont(), "Exit", 30),
-        m_font(Resources::MainFont())
-{
-    load_font();
-    setup_texts();
+    : IState(state_manager), IWindowKeeper(video_mode, window_title), m_menu(std::make_unique<Menu>(state_manager)),
+    m_background(Resources::BackgroundTexture()) {
+    auto texture_size = m_background.getTexture().getSize();
+    auto window_size = m_window.getSize();
+
+    float scale_x = float(window_size.x) / texture_size.x;
+    float scale_y = float(window_size.y) / texture_size.y;
+    m_background.setScale({scale_x, scale_y});
+
+    m_menu->setup_buttons(m_window.getSize());
 }
 
-void SelectState::load_font(){
-    m_font = Resources::MainFont();
-}
-
-void SelectState::setup_texts(){
-
-    m_title_text.setFont(m_font);
-    m_title_text.setCharacterSize(50);
-    m_title_text.setString("Gojo Sukuna Fight");
-    m_title_text.setFillColor(sf::Color::White);
-    m_title_text.setPosition(sf::Vector2f(m_window.getSize().x/2.0f - m_title_text.getGlobalBounds().size.x/2.0f, 100.0f));
-
-    m_start_text.setFont(m_font);
-    m_start_text.setCharacterSize(30);
-    m_start_text.setString("Start Game");
-    m_start_text.setPosition(sf::Vector2f(m_window.getSize().x/2.0f - m_start_text.getGlobalBounds().size.x/2.0f, 250.0f));
-
-    m_exit_text.setFont(m_font);
-    m_exit_text.setCharacterSize(30);
-    m_exit_text.setString("Exit Game");
-    m_exit_text.setPosition(sf::Vector2f(m_window.getSize().x/2.0f - m_exit_text.getGlobalBounds().size.x/2.0f, 300.0f));
-
-}
-
-void SelectState::move_selection_up(){
-    if (m_select_option == SelectOption::Exit)
-        m_select_option = SelectOption::Start;
-}
-
-void SelectState::move_selection_down(){
-    if (m_select_option == SelectOption::Start)
-        m_select_option = SelectOption::Exit;
-}
-
-void SelectState::confirm_selection(){
-    switch (m_select_option)
-    {
-        case SelectOption::Start:
-            std::cout << "Starting Game" << std::endl;
-            set_next_state(std::make_unique<GameState>(m_state_manager, sf::VideoMode({1250,1250}),"Game Window"));
-            break;
-        case SelectOption::Exit:
-            std::cout << "Exiting Game" << std::endl;
-            set_next_state(std::make_unique<ExitState>(m_state_manager));
-            break;
-    }
+bool SelectState::do_step(){
+    if (!m_window.isOpen()) return false;
+    event_handling();
+    update();
+    render();
+    return true;
 }
 
 void SelectState::event_handling(){
-    while (auto event = m_window.pollEvent())
-    {
-        if (event.value().is<sf::Event::Closed>())
-            m_window.close();
+    while (auto event = m_window.pollEvent()){
+        if (auto event_closed = event.value().getIf<sf::Event::Closed>()){
+            set_next_state(std::make_unique<ExitState>(m_state_manager));
+        }
         if (auto event_resized = event.value().getIf<sf::Event::Resized>()) {
             sf::View view = m_window.getView();
             view.setSize(sf::Vector2f(event_resized->size.x, event_resized->size.y));
             m_window.setView(view);
         }
-        if (auto event_key = event.value().getIf<sf::Event::KeyPressed>()) {
-            if (event_key->code == sf::Keyboard::Key::Up)
-                move_selection_up();
-        }
-        if (auto event_key = event.value().getIf<sf::Event::KeyPressed>()) {
-            if (event_key->code == sf::Keyboard::Key::Down)
-                move_selection_down();
-        }
-        if (auto event_key = event.value().getIf<sf::Event::KeyPressed>()) {
-            if (event_key->code == sf::Keyboard::Key::Space)
-                confirm_selection();
+        if (auto event_pressed = event.value().getIf<sf::Event::KeyPressed>()){
+            if (event_pressed->code == sf::Keyboard::Key::Up){
+                m_menu -> select_prev();
+                break;
+            }
+            if (event_pressed->code == sf::Keyboard::Key::Down){
+                m_menu -> select_next();
+                break;
+            }
+            if (event_pressed->code == sf::Keyboard::Key::Space){
+                if (auto selected = m_menu-> get_selected_button())
+                    selected -> push();
+                break;
+            }
         }
     }
 }
 
 void SelectState::update(){
-    if (m_select_option == SelectOption::Start){
-        m_start_text.setFillColor(sf::Color::Green);
-        m_exit_text.setFillColor(sf::Color::White);
-    }
-    else{
-        m_start_text.setFillColor(sf::Color::White);
-        m_exit_text.setFillColor(sf::Color::Green);
-    }
+    sf::Vector2i mouse_pixel_pos = sf::Mouse::getPosition(m_window);
+    sf::Vector2f mouse_global_pos = m_window.mapPixelToCoords(mouse_pixel_pos);
+    bool is_pressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+    m_menu->process_mouse(mouse_global_pos, is_pressed);
 }
 
 void SelectState::render(){
-    m_window.clear(sf::Color::Black);
-    m_window.draw(m_title_text);
-    m_window.draw(m_start_text);
-    m_window.draw(m_exit_text);
+    m_window.clear();
+    m_window.draw(m_background);
+    m_menu->draw_into(m_window);
     m_window.display();
-}
-
-bool SelectState::do_step(){
-    if(!m_window.isOpen())
-        return false;
-    event_handling();
-    update();
-    render();
-    return true;
 }

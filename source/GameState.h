@@ -1,5 +1,5 @@
 #pragma once
-#include "application.h"
+#include "Application.h"
 
 class GameState : public IState, public IWindowKeeper
 {

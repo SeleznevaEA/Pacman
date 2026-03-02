@@ -1,15 +1,15 @@
 #pragma once
-#include "application.h"
+#include "Application.h"
 
 class Resources {
 public:
-    static sf::Texture& GojoTexture() {
-        static sf::Texture texture{ "assets/Gojo/original/0-0.png" };
+    static sf::Texture& BackgroundTexture() {
+        static sf::Texture texture{ "assets/menu_background.jpg" };
         return texture;
     }
-    static sf::Font& MainFont() {
-        static sf::Font font{ "assets/PacManSenior-Regular.otf" };
-        return font;
+    static sf::Texture& GojoMainTexture() {
+        static sf::Texture texture{ "assets/Gojo/original/0-0.png" };
+        return texture;
     }
 public:
     Resources(const Resources& obj) = delete;

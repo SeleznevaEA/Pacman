@@ -1,5 +1,5 @@
 #pragma once
-#include "application.h"
+#include "Application.h"
 
 class ExitState : public IState
 {
