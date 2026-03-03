@@ -23,6 +23,11 @@ add_executable(proga
         source/Maze.h
         source/Maze.cpp
         source/GameContext.h
+        source/GameContext.cpp
+        source/TextureCache.h
+        source/TextureCache.cpp
+        source/Animation.h
+        source/Animation.cpp
 )
 set_target_properties(proga PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS ON)
 target_link_libraries(proga PRIVATE SFML::System SFML::Window SFML::Graphics)

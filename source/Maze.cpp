@@ -1,5 +1,7 @@
 #include "Maze.h"
 
+#include "GameContext.h"
+
 Room::Room(float size)
 {
     m_rectangle.setSize(sf::Vector2f(size, size));
@@ -86,6 +88,9 @@ void Pass::enter(IEntity* entity){
         entity->set_location(&m_room2);
     else if (current_room == &m_room2)
         entity->set_location(&m_room1);
+    if (auto* Pacman = dynamic_cast<::Pacman*>(entity)){
+
+    }
 }
 
 Maze::Maze(std::vector<Room*>& rooms) : m_rooms(rooms){}
