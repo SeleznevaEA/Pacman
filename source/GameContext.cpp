@@ -61,19 +61,45 @@ void Enemy::action(){
 }
 
 void Enemy::prepare_for_drawing(){
-    if (m_ptr_room){
-        sf::Vector2f room_pos = m_ptr_room->get_position();
-        float romm_size = m_ptr_room->get_size();
-    }
+    // TODO: Реализовать подготовку для отрисовки
+}
+
+void Enemy::draw_into(sf::RenderWindow& window) const {
+    // TODO: Реализовать отрисовку врага
 }
 
 
 void Food::prepare_for_drawing(){
-    if (m_is_eaten || !m_ptr_room) return;
-    sf::Vector2f room_pos = m_ptr_room->get_position();
-    float food_size = m_ptr_room->get_size();
+    // TODO: Реализовать подготовку для отрисовки
 }
 
-Pacman::Pacman(const Pacman& other){
+void Food::draw_into(sf::RenderWindow& window) const {
+    // TODO: Реализовать отрисовку еды
+}
 
+void Pacman::move(Direction direction){
+    if (m_ptr_room)
+        if (auto* side = m_ptr_room->get_side(direction))
+            side -> enter(this);
+}
+
+void Pacman::prepare_for_drawing(){
+    // TODO: Реализовать отрисовку без анимации
+}
+
+void Pacman::draw_into(sf::RenderWindow& window) const {
+    // TODO: Реализовать отрисовку без анимации
+}
+
+void ContextManager::restore_previous_context() {
+    if (m_contexts.size() > 1)
+        m_contexts.pop();
+    else
+        m_contexts.top() = m_initial_context.clone();
+}
+
+void ContextManager::reset(GameContext&& initial_context){
+    m_initial_context = initial_context;
+    m_contexts = std::stack<GameContext>();
+    save_current_context();
 }

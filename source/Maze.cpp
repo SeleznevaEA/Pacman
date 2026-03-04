@@ -71,9 +71,9 @@ void Wall::prepare_for_drawing(){
         break;
     }
     m_line[0].position = start;
-    m_line[0].color = sf::Color::Red;
+    m_line[0].color = sf::Color::Blue;
     m_line[1].position = end;
-    m_line[1].color = sf::Color::Red;
+    m_line[1].color = sf::Color::Blue;
 }
 
 void Wall::draw_into(sf::RenderWindow& window) const{
@@ -88,9 +88,9 @@ void Pass::enter(IEntity* entity){
         entity->set_location(&m_room2);
     else if (current_room == &m_room2)
         entity->set_location(&m_room1);
-    if (auto* Pacman = dynamic_cast<::Pacman*>(entity)){
-
-    }
+    // if (auto* Pacman = dynamic_cast<::Pacman*>(entity)){
+    //
+    // }
 }
 
 Maze::Maze(std::vector<Room*>& rooms) : m_rooms(rooms){}
@@ -111,5 +111,3 @@ void Maze::update_entities(const std::vector<IEntity*>& entities){
         if (entity)
             entity->prepare_for_drawing();
 }
-
-

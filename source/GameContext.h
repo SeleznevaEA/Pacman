@@ -1,19 +1,13 @@
 #pragma once
+#include <stack>
+
 #include "Maze.h"
-#include "TextureCache.h"
-#include "Animation.h"
 
 class Pacman : public IEntity{
-private:
-    sf::Sprite m_sprite;
-    std::unordered_map<std::string, Animation> m_animations;
-    std::string m_current_animation;
-    Direction m_direction;
-    bool is_moving;
 public:
-    Pacman();
-    ~Pacman();
-    Pacman(const Pacman& other);
+    Pacman() = default;
+    ~Pacman() = default;
+    Pacman(const Pacman& other) = default;
     void move(Direction direction);
     void prepare_for_drawing() override;
     void draw_into(sf::RenderWindow& window) const override;
@@ -69,8 +63,6 @@ public:
     std::vector<std::unique_ptr<IStaticEntity>> static_objects;
     std::vector<std::unique_ptr<IDynamicEntity>> dynamic_objects;
     State state = State::INGAME;
-
-    TextureCache texture_cache;
 public:
     GameContext() = default;
     ~GameContext() = default;
@@ -88,4 +80,17 @@ public:
     void clear();
     void update();
     void check_game_state();
+};
+
+class ContextManager{
+private:
+    GameContext m_initial_context;
+    std::stack<GameContext> m_contexts;
+public:
+    ContextManager() = default;
+    ~ContextManager();
+    void reset(GameContext&& initial_context);
+    GameContext& get_current_context() {return m_initial_context;}
+    void save_current_context(){ m_contexts.push(m_initial_context);}
+    void restore_previous_context();
 };

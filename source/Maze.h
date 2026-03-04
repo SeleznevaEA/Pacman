@@ -34,7 +34,6 @@ public:
     void set_side(Direction side, IRoomSide* ptr_side);
     IRoomSide* get_side(Direction side) const;
     Direction get_direction(IRoomSide* ptr_side) const;
-
     void draw_into(sf::RenderWindow& window) const override;
 };
 class IEntity : public IPreparable
@@ -43,7 +42,7 @@ protected:
     Room* m_ptr_room;
 public:
     IEntity() : m_ptr_room(nullptr) {}
-    virtual ~IEntity() override = default;
+    ~IEntity() override = default;
 
     void set_location(Room* ptr_room) { m_ptr_room= ptr_room;prepare_for_drawing();}
     Room* get_ptr_location() const {return m_ptr_room;}
@@ -67,7 +66,7 @@ private:
     Room& m_room1;
     Room& m_room2;
 public:
-    Pass(Room& room1, Room& room2);
+    Pass(Room& room1, Room& room2) : m_room1(room1), m_room2(room2) {}
 
     void enter(IEntity* entity) override;
     void prepare_for_drawing() override{}
@@ -80,7 +79,7 @@ private:
     Room& m_room;
     sf::Vertex m_line[2];
 public:
-    Wall(Room& room);
+    Wall(Room& room) : m_room(room) {}
     void enter(IEntity* entity) override{}
     void prepare_for_drawing() override;
     void draw_into(sf::RenderWindow& window) const override;
