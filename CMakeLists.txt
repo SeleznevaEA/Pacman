@@ -28,6 +28,8 @@ add_executable(proga
         source/TextureCache.cpp
         source/Animation.h
         source/Animation.cpp
+        source/Builders.h
+        source/Builders.cpp
 )
 set_target_properties(proga PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS ON)
 target_link_libraries(proga PRIVATE SFML::System SFML::Window SFML::Graphics)

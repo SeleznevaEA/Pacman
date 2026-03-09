@@ -1,10 +1,7 @@
 #pragma once
 #include "ExitState.h"
 #include "Menu.h"
-
-class GameBuilderDirector
-{
-};
+#include "Builders.h"
 
 class ChangeStateCommand : public ISelectCommand
 {
@@ -23,7 +20,8 @@ private:
 public:
     GameCommand(IStateManager& state_manager, GameBuilderDirector* ptr_director)
         : ChangeStateCommand(state_manager), m_ptr_director(ptr_director){}
-
+    
+    ~GameCommand() override;
     void execute() override;
 };
 

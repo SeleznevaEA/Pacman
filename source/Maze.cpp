@@ -10,10 +10,6 @@ Room::Room(float size)
     m_rectangle.setOutlineThickness(1);
 }
 
-Room::~Room(){
-    for (auto* side : m_sides)
-        delete side;
-}
 
 void Room::set_side(Direction direction, IRoomSide* ptr_side){
     if (direction >= 0 && direction < 4){
@@ -96,8 +92,27 @@ void Pass::enter(IEntity* entity){
 Maze::Maze(std::vector<Room*>& rooms) : m_rooms(rooms){}
 
 Maze::~Maze(){
-    for (auto* room : m_rooms)
-        delete room;
+    // Сначала удаляем все стороны комнат, потом сами комнаты
+    for (size_t idx = 0; idx < m_rooms.size(); ++idx) {
+        auto* room = m_rooms[idx];
+        if (room) {
+            // Очищаем стороны комнаты
+            for (size_t i = 0; i < room->m_sides.size(); ++i) {
+                if (room->m_sides[i]) {
+                    delete room->m_sides[i];
+                    room->m_sides[i] = nullptr;
+                }
+            }
+        }
+    }
+
+    // Теперь удаляем сами комнаты
+    for (size_t idx = 0; idx < m_rooms.size(); ++idx) {
+        if (m_rooms[idx]) {
+            delete m_rooms[idx];
+            m_rooms[idx] = nullptr;
+        }
+    }
 }
 
 void Maze::draw_into(sf::RenderWindow& window) const{

@@ -21,7 +21,7 @@ private:
     ISelectCommand* m_ptr_command;
 public:
     Button();
-    ~Button() override = default;
+    ~Button() override;
     void set(sf::Vector2f pos, sf::Vector2f button_size, const std::string& text,
         size_t font_size, ISelectCommand* ptr_command);
     void select();

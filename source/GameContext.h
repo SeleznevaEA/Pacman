@@ -88,7 +88,7 @@ private:
     std::stack<GameContext> m_contexts;
 public:
     ContextManager() = default;
-    ~ContextManager();
+    ~ContextManager() = default;
     void reset(GameContext&& initial_context);
     GameContext& get_current_context() {return m_initial_context;}
     void save_current_context(){ m_contexts.push(m_initial_context);}

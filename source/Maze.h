@@ -25,7 +25,7 @@ public:
     std::array<IRoomSide*, 4> m_sides{nullptr, nullptr, nullptr, nullptr};
 public:
     Room(float size);
-    ~Room() override;
+    ~Room() override {};
 
     float get_size() const {return m_rectangle.getSize().x;}
     void set_position(sf::Vector2f pos){m_rectangle.setPosition(pos);}
@@ -53,8 +53,29 @@ class Maze : public IDrawable
 private:
     std::vector<Room*> m_rooms;
 public:
+    Maze() = default;
     explicit Maze(std::vector<Room*>& rooms);
     ~Maze() override;
+    
+    // Конструктор и оператор перемещения
+    Maze(Maze&& other) noexcept : m_rooms(std::move(other.m_rooms)) {}
+    Maze& operator=(Maze&& other) noexcept {
+        if (this != &other) {
+            // Удаляем старые данные
+            for (auto* room : m_rooms) {
+                if (room) {
+                    for (auto* side : room->m_sides) delete side;
+                    delete room;
+                }
+            }
+            m_rooms = std::move(other.m_rooms);
+        }
+        return *this;
+    }
+    
+    // Запрещаем копирование
+    Maze(const Maze&) = delete;
+    Maze& operator=(const Maze&) = delete;
 
     void draw_into(sf::RenderWindow& window) const override;
     void update_entities(const std::vector<IEntity*>& entities);

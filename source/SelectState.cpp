@@ -5,14 +5,17 @@
 SelectState::SelectState(IStateManager& state_manager, sf::VideoMode video_mode, const std::string& window_title)
     : IState(state_manager), IWindowKeeper(video_mode, window_title), m_menu(std::make_unique<Menu>(state_manager)),
     m_background(Resources::BackgroundTexture()) {
-    auto texture_size = m_background.getTexture().getSize();
     auto window_size = m_window.getSize();
+    
+    // Проверяем, что текстура валидна
+    if (m_background.getTexture().getSize().x > 0) {
+        auto texture_size = m_background.getTexture().getSize();
+        float scale_x = float(window_size.x) / texture_size.x;
+        float scale_y = float(window_size.y) / texture_size.y;
+        m_background.setScale({scale_x, scale_y});
+    }
 
-    float scale_x = float(window_size.x) / texture_size.x;
-    float scale_y = float(window_size.y) / texture_size.y;
-    m_background.setScale({scale_x, scale_y});
-
-    m_menu->setup_buttons(m_window.getSize());
+    m_menu->setup_buttons(window_size);
 }
 
 bool SelectState::do_step(){

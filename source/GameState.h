@@ -1,6 +1,4 @@
 #pragma once
-#include "Application.h"
-#include "Maze.h"
 #include "GameContext.h"
 
 class GameState : public IState, public IWindowKeeper
@@ -10,7 +8,7 @@ private:
     ContextManager m_context_manager;
 public:
     GameState(IStateManager& state_manager, sf::VideoMode video_mode, const std::string& window_title);
-    virtual ~GameState() override = default;
+    virtual ~GameState() override;
 
     bool do_step() override;
     void event_handling() override;

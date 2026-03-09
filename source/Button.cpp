@@ -13,6 +13,10 @@ Button::Button() : m_ptr_command(nullptr), m_text(MyFont::instance().get_font())
     m_rectangle.setOutlineThickness(2);
 }
 
+Button::~Button() {
+    delete m_ptr_command;
+}
+
 void Button::set(sf::Vector2f pos, sf::Vector2f button_size, const std::string& text,
         size_t font_size, ISelectCommand* ptr_command)
 {

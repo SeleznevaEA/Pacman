@@ -1,8 +1,10 @@
 #include "Menu.h"
 #include "Commands.h"
+#include "Builders.h"
 
 Menu::Menu(IStateManager& state_manager)
-    :m_state_manager(state_manager), m_selected_button(nullptr), m_buttons(), m_title_text(MyFont::instance().get_font()){
+    :m_state_manager(state_manager), m_selected_button(nullptr),
+    m_buttons(), m_title_text(MyFont::instance().get_font()){
 
 }
 
@@ -19,26 +21,44 @@ void Menu::setup_buttons(sf::Vector2u window_size){
     m_title_text.setOutlineColor(sf::Color::White);
     m_title_text.setPosition(sf::Vector2f(80, 100));
 
+    // Кнопка 1: Простой лабиринт (SimpleBuilder)
+    IGameBuilder* simple_builder = new SimpleBuilder(
+        sf::VideoMode({1250, 1250}), "Simple Maze");
+    GameBuilderDirector* simple_director = new GameBuilderDirector(
+        simple_builder, sf::VideoMode({1250, 1250}), "Simple Maze", 0.05f);
+    
     m_buttons[0].set(
         sf::Vector2f{100, 850 - 7*button_height},
         sf::Vector2f{button_width, button_height},
         "5 Fingers",
         30,
-        new GameCommand(m_state_manager, new GameBuilderDirector()));
+        new GameCommand(m_state_manager, simple_director));
 
+    // Кнопка 2: Сложный лабиринт (ComplexBuilder) с большим количеством врагов
+    IGameBuilder* medium_builder = new ComplexBuilder(
+        sf::VideoMode({1250, 1250}), "Medium Maze");
+    GameBuilderDirector* medium_director = new GameBuilderDirector(
+        medium_builder, sf::VideoMode({1250, 1250}), "Medium Maze", 0.15f);
+    
     m_buttons[1].set(
         sf::Vector2f{100, 850 - 5*button_height},
         sf::Vector2f{button_width, button_height},
         "15 Fingers",
         30,
-        new GameCommand(m_state_manager, new GameBuilderDirector()));
+        new GameCommand(m_state_manager, medium_director));
 
+    // Кнопка 3: Очень сложный лабиринт (ComplexBuilder) с максимумом врагов
+    IGameBuilder* hard_builder = new ComplexBuilder(
+        sf::VideoMode({1250, 1250}), "Hard Maze");
+    GameBuilderDirector* hard_director = new GameBuilderDirector(
+        hard_builder, sf::VideoMode({1250, 1250}), "Hard Maze", 0.20f);
+    
     m_buttons[2].set(
         sf::Vector2f{100, 850 - 3*button_height},
         sf::Vector2f{button_width, button_height},
         "20 Fingers",
         30,
-        new GameCommand(m_state_manager, new GameBuilderDirector()));
+        new GameCommand(m_state_manager, hard_director));
 
     m_buttons[3].set(
         sf::Vector2f{100, 850},

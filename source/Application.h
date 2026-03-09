@@ -41,7 +41,8 @@ class IWindowKeeper
 protected:
     sf::RenderWindow m_window;
 public:
-    IWindowKeeper(sf::VideoMode video_mode, const std::string& window_title):m_window (video_mode, window_title){}
+    IWindowKeeper(sf::VideoMode video_mode, const std::string& window_title)
+        : m_window(video_mode, window_title, sf::Style::Default){}
     virtual ~IWindowKeeper() = default;
     bool is_window_open() const {return m_window.isOpen();}
     void close_window() {m_window.close();}
