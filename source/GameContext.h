@@ -4,8 +4,10 @@
 #include "Maze.h"
 
 class Pacman : public IEntity{
+private:
+    sf::Sprite m_sprite;
 public:
-    Pacman() = default;
+    Pacman();
     ~Pacman() = default;
     Pacman(const Pacman& other) = default;
     void move(Direction direction);
@@ -31,8 +33,11 @@ public:
 class Enemy : public IDynamicEntity{
 private:
     sf::Clock m_stopwatch;
+    sf::Sprite m_sprite;
+    float m_move_accumulator = 0.0f;
+    float m_move_interval = 0.7f;
 public:
-    Enemy() = default;
+    Enemy();
     Enemy(const Enemy& other) = default;
     std::unique_ptr<IDynamicEntity> clone() const override{return std::make_unique<Enemy>(*this);}
     void action() override;
@@ -43,8 +48,9 @@ public:
 class Food : public IStaticEntity{
 private:
     bool m_is_eaten = false;
+    sf::Sprite m_sprite;
 public:
-    Food() = default;
+    Food();
     Food(const Food& other) = default;
     std::unique_ptr<IStaticEntity> clone() const override{return std::make_unique<Food>(*this);}
     bool is_eaten() const {return m_is_eaten;}

@@ -1,5 +1,5 @@
 #include "GameContext.h"
-
+#include "Resources.h"
 #include "GameState.h"
 
 GameContext::GameContext(const GameContext& other){
@@ -50,32 +50,72 @@ void GameContext::check_game_state(){
         state = State::WIN;
 }
 
+Enemy::Enemy() : m_sprite(Resources::SukunaMainTexture()){}
+
 void Enemy::action(){
-    auto miliseconds = static_cast<size_t>(m_stopwatch.getElapsedTime().asMilliseconds());
-    if (miliseconds < static_cast<size_t>(rand() % 3000)) return;
-    if (m_ptr_room){
-        auto direction = static_cast<Direction>(rand() % 4);
-        m_ptr_room -> get_side(direction) -> enter(this);
+    m_move_accumulator += m_stopwatch.restart().asSeconds();
+    while (m_move_accumulator >= m_move_interval) {
+        if (m_ptr_room) {
+            auto direction = static_cast<Direction>(rand() % 4);
+            m_ptr_room->get_side(direction)->enter(this);
+
+        }
+        m_move_accumulator -= m_move_interval;
     }
-    m_stopwatch.restart();
 }
 
 void Enemy::prepare_for_drawing(){
-    // TODO: Реализовать подготовку для отрисовки
+    if (!m_ptr_room) return;
+    
+    sf::Vector2f room_pos = m_ptr_room->get_position();
+    float room_size = m_ptr_room->get_size();
+    
+    auto tex_size = m_sprite.getTexture().getSize();
+    float target_size = room_size * 0.8f;
+    float scale = target_size / std::max(tex_size.x, tex_size.y);
+    m_sprite.setScale({scale, scale});
+    
+    sf::FloatRect bounds = m_sprite.getGlobalBounds();
+    m_sprite.setPosition({
+        room_pos.x + (room_size - bounds.size.x) / 2,
+        room_pos.y + (room_size - bounds.size.y) / 2
+    });
 }
 
 void Enemy::draw_into(sf::RenderWindow& window) const {
-    // TODO: Реализовать отрисовку врага
+    if (!m_ptr_room) return;
+    window.draw(m_sprite);
 }
 
+Food::Food() : m_sprite(Resources::Food()){}
 
 void Food::prepare_for_drawing(){
-    // TODO: Реализовать подготовку для отрисовки
+    if (!m_ptr_room) return;
+    
+    sf::Vector2f room_pos = m_ptr_room->get_position();
+    float room_size = m_ptr_room->get_size();
+    
+    // Масштабируем по размеру текстуры
+    auto tex_size = m_sprite.getTexture().getSize();
+    float target_size = room_size * 0.25f;
+    float scale = target_size / std::max(tex_size.x, tex_size.y);
+    m_sprite.setScale({scale, scale});
+    
+    // Центрируем
+    sf::FloatRect bounds = m_sprite.getGlobalBounds();
+    m_sprite.setPosition({
+        room_pos.x + (room_size - bounds.size.x) / 2,
+        room_pos.y + (room_size - bounds.size.y) / 2
+    });
 }
 
+
 void Food::draw_into(sf::RenderWindow& window) const {
-    // TODO: Реализовать отрисовку еды
+    if (!m_is_eaten && m_ptr_room)
+        window.draw(m_sprite);
 }
+
+Pacman::Pacman() : m_sprite(Resources::GojoMainTexture()){}
 
 void Pacman::move(Direction direction){
     if (m_ptr_room)
@@ -83,13 +123,31 @@ void Pacman::move(Direction direction){
             side -> enter(this);
 }
 
-void Pacman::prepare_for_drawing(){
-    // TODO: Реализовать отрисовку без анимации
+void Pacman::prepare_for_drawing() {
+    if (!m_ptr_room) return;
+    
+    sf::Vector2f room_pos = m_ptr_room->get_position();
+    float room_size = m_ptr_room->get_size();
+    
+    // Масштабируем по размеру текстуры
+    auto tex_size = m_sprite.getTexture().getSize();
+    float target_size = room_size * 0.7f;
+    float scale = target_size / std::max(tex_size.x, tex_size.y);
+    m_sprite.setScale({scale, scale});
+    
+    // Центрируем в комнате
+    sf::FloatRect bounds = m_sprite.getGlobalBounds();
+    m_sprite.setPosition({
+        room_pos.x + (room_size - bounds.size.x) / 2,
+        room_pos.y + (room_size - bounds.size.y) / 2
+    });
 }
 
 void Pacman::draw_into(sf::RenderWindow& window) const {
-    // TODO: Реализовать отрисовку без анимации
+    if (!m_ptr_room) return;
+    window.draw(m_sprite);
 }
+
 
 void ContextManager::restore_previous_context() {
     if (m_contexts.size() > 1)

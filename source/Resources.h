@@ -8,7 +8,15 @@ public:
         return texture;
     }
     static sf::Texture& GojoMainTexture() {
-        static sf::Texture texture{ "assets/Gojo/original/0-0.png" };
+        static sf::Texture texture{ "assets/gojo/idle/0.png" };
+        return texture;
+    }
+    static sf::Texture& SukunaMainTexture() {
+        static sf::Texture texture{ "assets/sukuna/idle/0.png" };
+        return texture;
+    }
+    static sf::Texture& Food() {
+        static sf::Texture texture{ "assets/berry.jpg" };
         return texture;
     }
 public:

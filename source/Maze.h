@@ -21,6 +21,7 @@ class Room : public IDrawable
 {
 private:
     sf::RectangleShape m_rectangle;
+    int m_enemy_count = 0;
 public:
     std::array<IRoomSide*, 4> m_sides{nullptr, nullptr, nullptr, nullptr};
 public:
@@ -35,7 +36,12 @@ public:
     IRoomSide* get_side(Direction side) const;
     Direction get_direction(IRoomSide* ptr_side) const;
     void draw_into(sf::RenderWindow& window) const override;
+
+    bool has_enemy() const {if (m_enemy_count >= 2) {std::cout<<m_enemy_count;} return m_enemy_count > 0;}
+    void add_enemy() {m_enemy_count += 1;}
+    void remove_enemy() {m_enemy_count-=1;}
 };
+
 class IEntity : public IPreparable
 {
 protected:

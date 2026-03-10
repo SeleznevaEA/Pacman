@@ -68,4 +68,6 @@ public:
     ComplexBuilder(sf::VideoMode video_mode, std::string window_title);
     void create_rooms() override;
     void set_room_sides() override;
+    void ensure_neighbors(int row, int col);
+    void add_random_neighbor(int row, int col);
 };

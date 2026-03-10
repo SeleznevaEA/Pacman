@@ -6,7 +6,7 @@ Room::Room(float size)
 {
     m_rectangle.setSize(sf::Vector2f(size, size));
     m_rectangle.setFillColor(sf::Color::Black);
-    m_rectangle.setOutlineColor(sf::Color::White);
+    m_rectangle.setOutlineColor(sf::Color::Black);
     m_rectangle.setOutlineThickness(1);
 }
 
@@ -67,9 +67,9 @@ void Wall::prepare_for_drawing(){
         break;
     }
     m_line[0].position = start;
-    m_line[0].color = sf::Color::Blue;
+    m_line[0].color = sf::Color::White; // Тёмно-синий
     m_line[1].position = end;
-    m_line[1].color = sf::Color::Blue;
+    m_line[1].color = sf::Color::White; // Тёмно-синий
 }
 
 void Wall::draw_into(sf::RenderWindow& window) const{
@@ -80,13 +80,23 @@ void Pass::enter(IEntity* entity){
     if (!entity) return;
     Room* current_room = entity->get_ptr_location();
     if (!current_room) return;
-    if (current_room == &m_room1)
-        entity->set_location(&m_room2);
-    else if (current_room == &m_room2)
-        entity->set_location(&m_room1);
-    // if (auto* Pacman = dynamic_cast<::Pacman*>(entity)){
-    //
-    // }
+    Room* target_room = nullptr;
+    if (current_room == &m_room1) {
+        target_room = &m_room2;
+    } else if (current_room == &m_room2) {
+        target_room = &m_room1;
+    } else {
+        return;
+    }
+
+    if (dynamic_cast<Enemy*>(entity)) {
+        if (target_room->has_enemy()) {
+            return;
+        }
+        current_room->remove_enemy();
+        target_room->add_enemy();
+    }
+    entity->set_location(target_room);
 }
 
 Maze::Maze(std::vector<Room*>& rooms) : m_rooms(rooms){}

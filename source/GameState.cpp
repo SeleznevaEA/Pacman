@@ -53,13 +53,41 @@ void GameState::event_handling() {
 }
 
 void GameState::update() {
-    // Здесь будет игровая логика
+    auto& context = m_context_manager.get_current_context();
+    
+    context.update();
+    
+    if (context.get_pacman()) {
+        context.get_pacman()->prepare_for_drawing();
+    }
+    
+    for (const auto& obj : context.get_static_objects()) {
+        if (obj) obj->prepare_for_drawing();
+    }
+    
+    for (const auto& obj : context.get_dynamic_objects()) {
+        if (obj) obj->prepare_for_drawing();
+    }
 }
 
 void GameState::render() {
     m_window.clear(sf::Color::Black);
 
-    // Здесь будет отрисовка игры
+    m_maze.draw_into(m_window);
+    
+    auto& context = m_context_manager.get_current_context();
+    
+    for (const auto& obj : context.get_static_objects()) {
+        if (obj) obj->draw_into(m_window);
+    }
+    
+    for (const auto& obj : context.get_dynamic_objects()) {
+        if (obj) obj->draw_into(m_window);
+    }
+    
+    if (context.get_pacman()) {
+        context.get_pacman()->draw_into(m_window);
+    }
 
     m_window.display();
 }
