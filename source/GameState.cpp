@@ -48,7 +48,24 @@ void GameState::event_handling() {
                 m_window.close();
                 return;
             }
+            if (event_pressed->code == sf::Keyboard::Key::A || event_pressed->code == sf::Keyboard::Key::Left) {
+                m_context_manager.get_current_context().pacman->move(LEFT);
+                return;
+            }
+            if (event_pressed->code == sf::Keyboard::Key::D || event_pressed->code == sf::Keyboard::Key::Right) {
+                m_context_manager.get_current_context().pacman->move(RIGHT);
+                return;
+            }
+            if (event_pressed->code == sf::Keyboard::Key::W || event_pressed->code == sf::Keyboard::Key::Up) {
+                m_context_manager.get_current_context().pacman->move(UP);
+                return;
+            }
+            if (event_pressed->code == sf::Keyboard::Key::S || event_pressed->code == sf::Keyboard::Key::Down) {
+                m_context_manager.get_current_context().pacman->move(DOWN);
+                return;
+            }
         }
+
     }
 }
 
