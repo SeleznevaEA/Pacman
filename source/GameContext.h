@@ -19,6 +19,7 @@ class IStaticEntity : public IEntity{
 public:
     virtual ~IStaticEntity() override = default;
     virtual std::unique_ptr<IStaticEntity> clone() const = 0;
+    virtual void set_eaten(bool) = 0;
 };
 
 class IDynamicEntity : public IEntity{
@@ -69,6 +70,7 @@ public:
     std::vector<std::unique_ptr<IStaticEntity>> static_objects;
     std::vector<std::unique_ptr<IDynamicEntity>> dynamic_objects;
     State state = State::INGAME;
+    int score = 0;
 public:
     GameContext() = default;
     ~GameContext() = default;
@@ -86,6 +88,11 @@ public:
     void clear();
     void update();
     void check_game_state();
+    int get_score() const {return score;}
+    void increment_score() {++score;}
+
+    void check_eat();
+    void check_collision();
 };
 
 class ContextManager{

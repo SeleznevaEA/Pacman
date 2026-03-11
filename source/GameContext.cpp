@@ -35,6 +35,7 @@ void GameContext::clear(){
 }
 
 void GameContext::update(){
+    check_eat();
     for (auto& obj : dynamic_objects)
         if (obj)
             obj->action();
@@ -42,12 +43,23 @@ void GameContext::update(){
 
 void GameContext::check_game_state(){
     if (state != State::INGAME) return;
-    bool all_eaten = true;
-    for (const auto& obj : static_objects)
-        if (auto* food = dynamic_cast<Food*>(obj.get()))
-            if (!food->is_eaten()) {all_eaten = false; break;}
-    if (all_eaten)
+
+    if (score == static_objects.size())
+    {
         state = State::WIN;
+        std::cout << "Score: " << score << std::endl;
+    }
+}
+
+void GameContext::check_eat(){
+    for (auto& food : static_objects)
+    {
+        if (pacman->get_ptr_location() == food->get_ptr_location())
+        {
+            food->set_eaten(true);
+            increment_score();
+        }
+    }
 }
 
 Enemy::Enemy() : m_sprite(Resources::SukunaMainTexture()){}
@@ -131,7 +143,7 @@ void Pacman::prepare_for_drawing() {
     
     // Масштабируем по размеру текстуры
     auto tex_size = m_sprite.getTexture().getSize();
-    float target_size = room_size * 0.7f;
+    float target_size = room_size * 0.9f;
     float scale = target_size / std::max(tex_size.x, tex_size.y);
     m_sprite.setScale({scale, scale});
     

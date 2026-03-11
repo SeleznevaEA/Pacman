@@ -17,7 +17,7 @@ bool GameState::do_step() {
     if (!m_window.isOpen()) {
         return true;
     }
-    
+
     update();
     render();
 
@@ -85,6 +85,7 @@ void GameState::update() {
     for (const auto& obj : context.get_dynamic_objects()) {
         if (obj) obj->prepare_for_drawing();
     }
+
 }
 
 void GameState::render() {
