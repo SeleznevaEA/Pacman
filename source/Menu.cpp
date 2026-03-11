@@ -25,7 +25,7 @@ void Menu::setup_buttons(sf::Vector2u window_size){
     IGameBuilder* simple_builder = new SimpleBuilder(
         sf::VideoMode({1250, 1250}), "Simple Maze");
     GameBuilderDirector* simple_director = new GameBuilderDirector(
-        simple_builder, sf::VideoMode({1250, 1250}), "Simple Maze", 0.05f);
+        simple_builder, sf::VideoMode({1250, 1250}), "Simple Maze", 0.02f);
     
     m_buttons[0].set(
         sf::Vector2f{100, 850 - 7*button_height},
@@ -38,7 +38,7 @@ void Menu::setup_buttons(sf::Vector2u window_size){
     IGameBuilder* medium_builder = new ComplexBuilder(
         sf::VideoMode({1250, 1250}), "Medium Maze");
     GameBuilderDirector* medium_director = new GameBuilderDirector(
-        medium_builder, sf::VideoMode({1250, 1250}), "Medium Maze", 0.15f);
+        medium_builder, sf::VideoMode({1250, 1250}), "Medium Maze", 0.5f);
     
     m_buttons[1].set(
         sf::Vector2f{100, 850 - 5*button_height},
@@ -51,7 +51,7 @@ void Menu::setup_buttons(sf::Vector2u window_size){
     IGameBuilder* hard_builder = new ComplexBuilder(
         sf::VideoMode({1250, 1250}), "Hard Maze");
     GameBuilderDirector* hard_director = new GameBuilderDirector(
-        hard_builder, sf::VideoMode({1250, 1250}), "Hard Maze", 0.20f);
+        hard_builder, sf::VideoMode({1250, 1250}), "Hard Maze", 0.1f);
     
     m_buttons[2].set(
         sf::Vector2f{100, 850 - 3*button_height},

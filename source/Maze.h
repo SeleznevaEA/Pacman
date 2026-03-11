@@ -42,7 +42,7 @@ public:
     void remove_enemy() {m_enemy_count-=1;}
 };
 
-class IEntity : public IPreparable
+class IEntity : virtual public IPreparable
 {
 protected:
     Room* m_ptr_room;
@@ -63,21 +63,8 @@ public:
     explicit Maze(std::vector<Room*>& rooms);
     ~Maze() override;
     
-    // Конструктор и оператор перемещения
     Maze(Maze&& other) noexcept : m_rooms(std::move(other.m_rooms)) {}
-    Maze& operator=(Maze&& other) noexcept {
-        if (this != &other) {
-            // Удаляем старые данные
-            for (auto* room : m_rooms) {
-                if (room) {
-                    for (auto* side : room->m_sides) delete side;
-                    delete room;
-                }
-            }
-            m_rooms = std::move(other.m_rooms);
-        }
-        return *this;
-    }
+    Maze& operator=(Maze&& other) noexcept;
     
     // Запрещаем копирование
     Maze(const Maze&) = delete;

@@ -1,4 +1,7 @@
 #include "GameState.h"
+
+#include <algorithm>
+
 #include "SelectState.h"
 #include "Resources.h"
 
@@ -11,8 +14,9 @@ GameState::~GameState() {
 }
 
 bool GameState::do_step() {
+
     event_handling();
-    
+
     // Если окно закрыто (переход в SelectState), возвращаем true для применения нового состояния
     if (!m_window.isOpen()) {
         return true;
@@ -73,7 +77,7 @@ void GameState::update() {
     auto& context = m_context_manager.get_current_context();
     
     context.update();
-    
+
     if (context.get_pacman()) {
         context.get_pacman()->prepare_for_drawing();
     }
@@ -89,12 +93,59 @@ void GameState::update() {
 }
 
 void GameState::render() {
-    m_window.clear(sf::Color::Black);
+
+    auto& context = m_context_manager.get_current_context();
+    if (context.get_state() == GameContext::State::WIN) {
+        sf::Sprite winSprite(Resources::Win());
+        sf::Text win_text{MyFont::instance().get_font(), "Nah, I'd WIN"};
+
+        sf::Vector2u windowSize = m_window.getSize();
+        sf::Vector2u textureSize = Resources::Win().getSize();
+
+        float scaleX = static_cast<float>(windowSize.x) / textureSize.x;
+        float scaleY = static_cast<float>(windowSize.y) / textureSize.y;
+
+        winSprite.setScale({scaleX, scaleY});
+
+        win_text.setCharacterSize(50);
+        win_text.setFillColor(sf::Color::Black);
+        win_text.setOutlineThickness(3);
+        win_text.setOutlineColor(sf::Color::Blue);
+        win_text.setPosition(sf::Vector2f(80, 100));
+
+        m_window.draw(winSprite);
+        m_window.draw(win_text);
+        m_window.display();
+        return;
+    }
+    if (context.get_state() == GameContext::State::LOST) {
+        sf::Sprite loseSprite(Resources::Loose());
+        sf::Text loose_text{MyFont::instance().get_font(), "HAHAHAHAH"};
+        // Масштабируем под размер окна
+        sf::Vector2u windowSize = m_window.getSize();
+        sf::Vector2u textureSize = Resources::Loose().getSize();
+
+        float scaleX = static_cast<float>(windowSize.x) / textureSize.x;
+        float scaleY = static_cast<float>(windowSize.y) / textureSize.y;
+
+        loseSprite.setScale({scaleX, scaleY});
+
+        loose_text.setCharacterSize(50);
+        loose_text.setFillColor(sf::Color::Black);
+        loose_text.setOutlineThickness(3);
+        loose_text.setOutlineColor(sf::Color::Red);
+        loose_text.setPosition({m_window.getSize().x / 2.0f, m_window.getSize().y / 5.0f});
+
+        m_window.draw(loseSprite);
+        m_window.draw(loose_text);
+        m_window.display();
+        return;
+    }
+    else {m_window.clear(sf::Color::Black);}
 
     m_maze.draw_into(m_window);
     
-    auto& context = m_context_manager.get_current_context();
-    
+
     for (const auto& obj : context.get_static_objects()) {
         if (obj) obj->draw_into(m_window);
     }
@@ -108,4 +159,16 @@ void GameState::render() {
     }
 
     m_window.display();
+}
+
+void DeleteStaticEntity::handle(GameContext* context) const{
+    auto& objects = context->static_objects;
+    auto it = std::find_if(objects.begin(), objects.end(),
+        [this](const auto& ptr) {
+            return ptr.get() == m_ptr_entity;
+        });
+
+    if (it != objects.end()) {
+        objects.erase(it);
+    }
 }

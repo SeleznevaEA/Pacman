@@ -125,6 +125,21 @@ Maze::~Maze(){
     }
 }
 
+Maze& Maze::operator=(Maze&& other) noexcept{
+    if (this != &other) {
+        // Удаляем старые данные
+        for (auto* room : m_rooms) {
+            if (room) {
+                for (auto* side : room->m_sides) delete side;
+                delete room;
+            }
+        }
+        m_rooms = std::move(other.m_rooms);
+    }
+    return *this;
+}
+
+
 void Maze::draw_into(sf::RenderWindow& window) const{
     for (auto* room : m_rooms)
         if (room)

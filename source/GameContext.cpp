@@ -35,32 +35,53 @@ void GameContext::clear(){
 }
 
 void GameContext::update(){
-    check_eat();
     for (auto& obj : dynamic_objects)
         if (obj)
             obj->action();
+
+
+    // for (auto& obj : static_objects) {
+    //     obj->accept(pacman.get());
+    // }
+    //
+    // for (auto& obj : dynamic_objects) {
+    //     obj->accept(pacman.get());
+    // }
+    std::vector<std::unique_ptr<IGameEvent>> events;
+
+    // Собираем события
+    for (auto& obj : static_objects) {
+        if (auto event = obj->accept(pacman.get())) {
+            events.push_back(std::move(event));
+        }
+    }
+
+    for (auto& obj : dynamic_objects) {
+        if (auto event = obj->accept(pacman.get())) {
+            events.push_back(std::move(event));
+        }
+    }
+
+    // Обрабатываем события
+    for (auto& event : events) {
+        event->handle(this);
+        if (state == State::LOST) break;
+    }
+
+    check_game_state();
 }
 
 void GameContext::check_game_state(){
     if (state != State::INGAME) return;
-
-    if (score == static_objects.size())
+    bool all_eaten = false;
+    for (auto& obj : static_objects)
     {
-        state = State::WIN;
-        std::cout << "Score: " << score << std::endl;
+        if (!obj->is_eaten())
+            return;
     }
+    state = State::WIN;
 }
 
-void GameContext::check_eat(){
-    for (auto& food : static_objects)
-    {
-        if (pacman->get_ptr_location() == food->get_ptr_location())
-        {
-            food->set_eaten(true);
-            increment_score();
-        }
-    }
-}
 
 Enemy::Enemy() : m_sprite(Resources::SukunaMainTexture()){}
 
@@ -99,6 +120,11 @@ void Enemy::draw_into(sf::RenderWindow& window) const {
     window.draw(m_sprite);
 }
 
+std::unique_ptr<IGameEvent> Enemy::accept(IVisitor* ptr_visitor){
+    return ptr_visitor->visit(this);
+}
+
+
 Food::Food() : m_sprite(Resources::Food()){}
 
 void Food::prepare_for_drawing(){
@@ -121,13 +147,30 @@ void Food::prepare_for_drawing(){
     });
 }
 
-
 void Food::draw_into(sf::RenderWindow& window) const {
     if (!m_is_eaten && m_ptr_room)
         window.draw(m_sprite);
 }
 
+std::unique_ptr<IGameEvent> Food::accept(IVisitor* ptr_visitor) {
+    return ptr_visitor->visit(this);
+}
+
+
+
 Pacman::Pacman() : m_sprite(Resources::GojoMainTexture()){}
+
+std::unique_ptr<IGameEvent> Pacman::visit(Food* ptr_food) {
+    if (ptr_food->get_ptr_location() != this->get_ptr_location())
+        return {};
+    return std::make_unique<DeleteStaticEntity>(ptr_food);
+}
+
+std::unique_ptr<IGameEvent> Pacman::visit(Enemy* ptr_enemy) {
+    if (ptr_enemy->get_ptr_location() != this->get_ptr_location())
+        return {};
+    return std::make_unique<LostGame>();
+}
 
 void Pacman::move(Direction direction){
     if (m_ptr_room)
@@ -159,6 +202,7 @@ void Pacman::draw_into(sf::RenderWindow& window) const {
     if (!m_ptr_room) return;
     window.draw(m_sprite);
 }
+
 
 
 void ContextManager::restore_previous_context() {

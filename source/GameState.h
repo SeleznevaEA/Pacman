@@ -30,11 +30,16 @@ public:
 
 class DeleteStaticEntity : public IGameEvent
 {
-    private:
+private:
     IStaticEntity* m_ptr_entity;
 public:
     DeleteStaticEntity(IStaticEntity* entity) : m_ptr_entity(entity) {}
     ~DeleteStaticEntity() override = default;
+    void handle(GameContext* context) const override;
 };
 
-class LostGame : public IGameEvent{};
+class LostGame : public IGameEvent
+{
+public:
+    void handle(GameContext* context) const override{context->state = GameContext::State::LOST;}
+};

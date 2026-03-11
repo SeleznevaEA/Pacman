@@ -19,6 +19,14 @@ public:
         static sf::Texture texture{ "assets/berry.jpg" };
         return texture;
     }
+    static sf::Texture& Win() {
+        static sf::Texture texture{ "assets/gojo_win.jpg" };
+        return texture;
+    }
+    static sf::Texture& Loose() {
+        static sf::Texture texture{ "assets/sukuna_win.jpg" };
+        return texture;
+    }
 public:
     Resources(const Resources& obj) = delete;
     Resources& operator =(const Resources& obj) = delete;

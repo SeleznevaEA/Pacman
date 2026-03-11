@@ -1,9 +1,32 @@
 #pragma once
 #include <stack>
-
 #include "Maze.h"
 
-class Pacman : public IEntity{
+class IStaticEntity;
+class IDynamicEntity;
+class Food;
+class IGameEvent;
+class GameContext;
+class Enemy;
+class ContextManager;
+
+class IVisitor : virtual public IEntity
+{
+public:
+    IVisitor() = default;
+    virtual ~IVisitor() = default;
+    virtual std::unique_ptr<IGameEvent> visit(Food* ptr_food) = 0;
+    virtual std::unique_ptr<IGameEvent> visit(Enemy* ptr_enemy) = 0;
+};
+class IVisitable : virtual public IEntity
+{
+public:
+    IVisitable() = default;
+    virtual ~IVisitable() override = default;
+    virtual std::unique_ptr<IGameEvent> accept(IVisitor* ptr_visitor) = 0;
+};
+
+class Pacman : public IVisitor{
 private:
     sf::Sprite m_sprite;
 public:
@@ -13,16 +36,19 @@ public:
     void move(Direction direction);
     void prepare_for_drawing() override;
     void draw_into(sf::RenderWindow& window) const override;
+    std::unique_ptr<IGameEvent> visit(Food* ptr_food) override;
+    std::unique_ptr<IGameEvent> visit(Enemy* ptr_enemy) override;
 };
 
-class IStaticEntity : public IEntity{
+class IStaticEntity : public IVisitable{
 public:
     virtual ~IStaticEntity() override = default;
     virtual std::unique_ptr<IStaticEntity> clone() const = 0;
     virtual void set_eaten(bool) = 0;
+    virtual bool is_eaten() const = 0;
 };
 
-class IDynamicEntity : public IEntity{
+class IDynamicEntity : public IVisitable{
 protected:
     sf::Clock m_action_clock;
 public:
@@ -44,6 +70,7 @@ public:
     void action() override;
     void prepare_for_drawing() override;
     void draw_into(sf::RenderWindow& window) const override;
+    std::unique_ptr<IGameEvent> accept(IVisitor* ptr_visitor) override;
 };
 
 class Food : public IStaticEntity{
@@ -55,10 +82,11 @@ public:
     Food(const Food& other) = default;
     std::unique_ptr<IStaticEntity> clone() const override{return std::make_unique<Food>(*this);}
     bool is_eaten() const {return m_is_eaten;}
-    void set_eaten(bool eaten) {m_is_eaten = eaten;}
+    void set_eaten(bool eaten) override {m_is_eaten = eaten;}
     void packman_eaten() {m_is_eaten = true;}
     void prepare_for_drawing() override;
     void draw_into(sf::RenderWindow& window) const override;
+    std::unique_ptr<IGameEvent> accept(IVisitor* ptr_visitor) override;
 };
 
 class GameContext{
@@ -70,7 +98,6 @@ public:
     std::vector<std::unique_ptr<IStaticEntity>> static_objects;
     std::vector<std::unique_ptr<IDynamicEntity>> dynamic_objects;
     State state = State::INGAME;
-    int score = 0;
 public:
     GameContext() = default;
     ~GameContext() = default;
@@ -88,11 +115,6 @@ public:
     void clear();
     void update();
     void check_game_state();
-    int get_score() const {return score;}
-    void increment_score() {++score;}
-
-    void check_eat();
-    void check_collision();
 };
 
 class ContextManager{
