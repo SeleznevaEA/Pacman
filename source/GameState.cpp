@@ -8,7 +8,9 @@
 GameState::GameState(IStateManager& state_manager, sf::VideoMode video_mode, const std::string& window_title)
     : IState(state_manager)
     , IWindowKeeper(video_mode, window_title)
-    , m_maze(){}
+    , m_maze()
+    ,m_win_buffer("assets/gojo/nah.wav")
+    ,m_lose_buffer("assets/gojo/sukuna_laugh.wav"){}
 
 GameState::~GameState() {
 }
@@ -17,7 +19,6 @@ bool GameState::do_step() {
 
     event_handling();
 
-    // Если окно закрыто (переход в SelectState), возвращаем true для применения нового состояния
     if (!m_window.isOpen()) {
         return true;
     }
@@ -116,6 +117,19 @@ void GameState::render() {
         m_window.draw(winSprite);
         m_window.draw(win_text);
         m_window.display();
+
+        if (!m_sound_played)
+        {
+            sf::Sound sound(m_win_buffer);
+            sound.setLooping(false);
+            sound.play();
+
+            while (sound.getStatus() == sf::Sound::Status::Playing) {
+                sf::sleep(sf::milliseconds(100));
+            }
+            m_sound_played = true;
+        }
+
         return;
     }
     if (context.get_state() == GameContext::State::LOST) {
@@ -139,6 +153,17 @@ void GameState::render() {
         m_window.draw(loseSprite);
         m_window.draw(loose_text);
         m_window.display();
+        if (!m_sound_played)
+        {
+            sf::Sound sound(m_lose_buffer);
+            sound.setLooping(false);
+            sound.play();
+
+            while (sound.getStatus() == sf::Sound::Status::Playing) {
+                sf::sleep(sf::milliseconds(100));
+            }
+            m_sound_played = true;
+        }
         return;
     }
     else {m_window.clear(sf::Color::Black);}
