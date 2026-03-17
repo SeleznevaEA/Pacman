@@ -6,9 +6,10 @@ class GameState : public IState, public IWindowKeeper
 private:
     Maze m_maze;
     ContextManager m_context_manager;
-    bool m_sound_played = false;
+    bool m_sound_played;
     sf::SoundBuffer m_win_buffer;
     sf::SoundBuffer m_lose_buffer;
+    sf::Sound m_sound;
 public:
     GameState(IStateManager& state_manager, sf::VideoMode video_mode, const std::string& window_title);
     virtual ~GameState() override;

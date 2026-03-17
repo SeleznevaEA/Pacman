@@ -10,9 +10,12 @@ GameState::GameState(IStateManager& state_manager, sf::VideoMode video_mode, con
     , IWindowKeeper(video_mode, window_title)
     , m_maze()
     ,m_win_buffer("assets/gojo/nah.wav")
-    ,m_lose_buffer("assets/gojo/sukuna_laugh.wav"){}
+    ,m_lose_buffer("assets/gojo/sukuna_laugh.wav")
+    , m_sound(m_win_buffer)
+    , m_sound_played(false){}
 
 GameState::~GameState() {
+    m_sound.stop();
 }
 
 bool GameState::do_step() {
@@ -120,14 +123,13 @@ void GameState::render() {
 
         if (!m_sound_played)
         {
-            sf::Sound sound(m_win_buffer);
-            sound.setLooping(false);
-            sound.play();
-
-            while (sound.getStatus() == sf::Sound::Status::Playing) {
-                sf::sleep(sf::milliseconds(100));
-            }
             m_sound_played = true;
+            m_sound.setBuffer(m_win_buffer);
+            m_sound.setLooping(false);
+            m_sound.play();
+            m_sound.setVolume(140);
+            m_sound_played = true;
+            return;
         }
 
         return;
@@ -155,14 +157,13 @@ void GameState::render() {
         m_window.display();
         if (!m_sound_played)
         {
-            sf::Sound sound(m_lose_buffer);
-            sound.setLooping(false);
-            sound.play();
-
-            while (sound.getStatus() == sf::Sound::Status::Playing) {
-                sf::sleep(sf::milliseconds(100));
-            }
             m_sound_played = true;
+            m_sound.setBuffer(m_lose_buffer);
+            m_sound.setLooping(false);
+            m_sound.setVolume(80);
+            m_sound.play();
+            m_sound_played = true;
+            return;
         }
         return;
     }
