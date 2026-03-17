@@ -1,5 +1,8 @@
 #pragma once
 #include "Menu.h"
+#include "Resources.h"
+#include "ExitState.h"
+
 
 class SelectState : public IState, public IWindowKeeper
 {

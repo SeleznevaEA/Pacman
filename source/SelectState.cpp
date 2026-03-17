@@ -1,6 +1,4 @@
 #include "SelectState.h"
-#include "Resources.h"
-#include "ExitState.h"
 
 SelectState::SelectState(IStateManager& state_manager, sf::VideoMode video_mode, const std::string& window_title)
     : IState(state_manager), IWindowKeeper(video_mode, window_title), m_menu(std::make_unique<Menu>(state_manager)),
@@ -45,11 +43,11 @@ void SelectState::event_handling(){
                 m_menu -> select_next();
                 break;
             }
-            if (event_pressed->code == sf::Keyboard::Key::Space){
-                if (auto selected = m_menu-> get_selected_button())
-                    selected -> push();
-                break;
-            }
+        //     // if (event_pressed->code == sf::Keyboard::Key::Space){
+        //     //     if (auto selected = m_menu-> get_selected_button())
+        //     //         selected -> push();
+        //     //     break;
+        //     //}
         }
     }
 }

@@ -38,15 +38,6 @@ void GameContext::update(){
     for (auto& obj : dynamic_objects)
         if (obj)
             obj->action();
-
-
-    // for (auto& obj : static_objects) {
-    //     obj->accept(pacman.get());
-    // }
-    //
-    // for (auto& obj : dynamic_objects) {
-    //     obj->accept(pacman.get());
-    // }
     std::vector<std::unique_ptr<IGameEvent>> events;
 
     // Собираем события
@@ -87,14 +78,19 @@ Enemy::Enemy() : m_sprite(Resources::SukunaMainTexture()){}
 
 void Enemy::action(){
     m_move_accumulator += m_stopwatch.restart().asSeconds();
-    while (m_move_accumulator >= m_move_interval) {
+    if (m_move_accumulator >= m_move_interval) {
         if (m_ptr_room) {
             auto direction = static_cast<Direction>(rand() % 4);
             m_ptr_room->get_side(direction)->enter(this);
-
+            if (Direction::LEFT == direction)
+                m_sprite = sf::Sprite(Resources::SukLeft());
+            else if (Direction::RIGHT == direction)
+                m_sprite = sf::Sprite(Resources::SukRight());
+            else m_sprite = sf::Sprite(Resources::SukunaMainTexture());
         }
         m_move_accumulator -= m_move_interval;
     }
+
 }
 
 void Enemy::prepare_for_drawing(){
@@ -176,6 +172,37 @@ void Pacman::move(Direction direction){
     if (m_ptr_room)
         if (auto* side = m_ptr_room->get_side(direction))
             side -> enter(this);
+    if (Direction::LEFT == direction)
+    {
+        if ( m_step_count_left % 4 == 0)
+            m_sprite = sf::Sprite(Resources::GojoLeft0());
+        else if ( m_step_count_left % 4 == 1)
+            m_sprite = sf::Sprite(Resources::GojoLeft1());
+        else if ( m_step_count_left % 4 == 2)
+            m_sprite = sf::Sprite(Resources::GojoLeft2());
+        else if ( m_step_count_left % 4 == 3)
+            m_sprite = sf::Sprite(Resources::GojoLeft3());
+        m_step_count_left+=1;
+    }
+    else if (Direction::RIGHT == direction)
+    {
+        if (m_step_count_right % 4==0 )
+            m_sprite = sf::Sprite(Resources::GojoRight0());
+        else if (m_step_count_right % 4==1 )
+            m_sprite = sf::Sprite(Resources::GojoRight1());
+        else if (m_step_count_right % 4==2 )
+            m_sprite = sf::Sprite(Resources::GojoRight2());
+        else if (m_step_count_right % 4==3 )
+            m_sprite = sf::Sprite(Resources::GojoRight3());
+        m_step_count_right+=1;
+    }
+    else
+    {
+        m_sprite = sf::Sprite(Resources::GojoMainTexture());
+        m_step_count_right = 0;
+        m_step_count_left = 0;
+    }
+
 }
 
 void Pacman::prepare_for_drawing() {

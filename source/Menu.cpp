@@ -70,6 +70,11 @@ void Menu::setup_buttons(sf::Vector2u window_size){
 }
 
 void Menu::process_mouse(sf::Vector2f mouse_pos, bool is_pressed){
+    sf::SoundBuffer buffer;
+    if (!buffer.loadFromFile("assets/gojo/0-10.wav")) {
+        std::cout << "Failed to load gojo sound in SelectState" << std::endl;
+    }
+    sf::Sound sound(buffer);
     Button* selected = nullptr;
     for (auto& button : m_buttons){
         if (button.is_position_in(mouse_pos)){
@@ -85,7 +90,13 @@ void Menu::process_mouse(sf::Vector2f mouse_pos, bool is_pressed){
             m_selected_button->select();
     }
     if (is_pressed && m_selected_button)
+    {
+        sound.play();
+        while (sound.getStatus() == sf::Sound::Status::Playing) {
+            sf::sleep(sf::milliseconds(100));
+        }
         m_selected_button->push();
+    }
 }
 void Menu::select_next(){
     if (m_buttons.empty()) return;

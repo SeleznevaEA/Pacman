@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "SFML/Graphics/RectangleShape.hpp"
 #include "SFML/Graphics/Text.hpp"
+#include <SFML/Audio.hpp>
 
 class ISelectCommand;
 

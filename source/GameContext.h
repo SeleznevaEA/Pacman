@@ -29,6 +29,8 @@ public:
 class Pacman : public IVisitor{
 private:
     sf::Sprite m_sprite;
+    int m_step_count_left = 0;
+    int m_step_count_right = 0;
 public:
     Pacman();
     ~Pacman() = default;
