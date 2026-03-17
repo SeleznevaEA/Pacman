@@ -34,11 +34,11 @@ void Menu::setup_buttons(sf::Vector2u window_size){
         30,
         new GameCommand(m_state_manager, simple_director));
 
-    // Кнопка 2: Сложный лабиринт (ComplexBuilder) с большим количеством врагов
+    // Кнопка 2: Сложный лабиринт
     IGameBuilder* medium_builder = new ComplexBuilder(
         sf::VideoMode({1250, 1250}), "Medium Maze");
     GameBuilderDirector* medium_director = new GameBuilderDirector(
-        medium_builder, sf::VideoMode({1250, 1250}), "Medium Maze", 0.5f);
+        medium_builder, sf::VideoMode({1250, 1250}), "Medium Maze", 0.05f);
     
     m_buttons[1].set(
         sf::Vector2f{100, 850 - 5*button_height},
@@ -47,7 +47,7 @@ void Menu::setup_buttons(sf::Vector2u window_size){
         30,
         new GameCommand(m_state_manager, medium_director));
 
-    // Кнопка 3: Очень сложный лабиринт (ComplexBuilder) с максимумом врагов
+    // Кнопка 3: Очень сложный лабиринт (ComplexBuilder)
     IGameBuilder* hard_builder = new ComplexBuilder(
         sf::VideoMode({1250, 1250}), "Hard Maze");
     GameBuilderDirector* hard_director = new GameBuilderDirector(
