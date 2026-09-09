@@ -6,7 +6,8 @@
 
 > Консольная аркада, где Годжо Сатору собирает очки, уворачиваясь от Короля Проклятий Сукуны. Реализована на C++ с использованием ООП-парадигмы.
 
-![Gameplay](https://i.imgur.com/your-screenshot.png) <!-- добавь свой скриншот -->
+![Gameplay](screenshots/main_screen.png)
+![Gameplay](screenshots/gameplay.png)
 
 ---
 ## 📖 Сюжет
